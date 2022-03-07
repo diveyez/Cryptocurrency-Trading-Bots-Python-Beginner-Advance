@@ -157,9 +157,8 @@ def convert_time_binance(gt):
     ff=gg-10799260
     uu=ff/1000
     yy=int(uu)
-    tt=time.localtime(yy)
     #print(tt)
-    return tt
+    return time.localtime(yy)
 
 
 def get_historical_klines(symbol, interval, start_str, end_str=None):
@@ -196,11 +195,7 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
     # convert our date strings to milliseconds
     start_ts = date_to_milliseconds(start_str)
 
-    # if an end time was passed convert it
-    end_ts = None
-    if end_str:
-        end_ts = date_to_milliseconds(end_str)
-
+    end_ts = date_to_milliseconds(end_str) if end_str else None
     idx = 0
     # it can be difficult to know when a symbol was listed on Binance so allow start time to be before list date
     symbol_existed = False
@@ -265,18 +260,13 @@ def save_historic_klines_csv(symbol, start, end, interval):
 
             #track opening prices, use for calculating moving averages
             list_of_open.append(open1)
-                #Calculate three 'period' moving average - Based on Candlestick duration
             if len(list_of_open)>2:
-                price3=0
-                for pri in list_of_open[-3:]:
-                    price3+=pri
+                price3 = sum(list_of_open[-3:])
                 three_period_moving_ave.append(float(price3/3))
                 time3.append(time1)
             #Perform Moving Average Calculation for 10 periods
             if len(list_of_open)>9:
-                price10=0
-                for pri in list_of_open[-10:]:
-                    price10+=pri
+                price10 = sum(list_of_open[-10:])
                 ten_period_moving_ave.append(float(price10/10))
                 time10.append(time1)
 

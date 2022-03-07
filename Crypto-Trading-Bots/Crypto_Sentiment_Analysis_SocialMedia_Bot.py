@@ -113,24 +113,19 @@ class TwitterClient(object):
             for tweet in fetched_tweets:
 
                 # empty dictionary to store required params of a tweet
-                parsed_tweet = {}
+                parsed_tweet = {'text': tweet.text}
 
-                # saving text of tweet
-                #tweet1 =
-                #tweet1=TwitterClient.api.clean_tweet(tweet_text)
-                parsed_tweet['text'] = tweet.text
                 list_of_tweets.append(tweet.text)
                 # saving sentiment of tweet
                 parsed_tweet['sentiment'] = self.get_tweet_sentiment(tweet.text)
 
                 # appending parsed tweet to tweets list
-                if tweet.retweet_count > 0:
-                    # if tweet has retweets, ensure that it is appended only once
-                    if parsed_tweet not in tweets:
-                        tweets.append(parsed_tweet)
-                else:
+                if (
+                    tweet.retweet_count > 0
+                    and parsed_tweet not in tweets
+                    or tweet.retweet_count <= 0
+                ):
                     tweets.append(parsed_tweet)
-
             # return parsed tweets
             with open('TweetHistory.txt', 'a+') as f1:
                 for tweet in list_of_tweets:
@@ -143,7 +138,7 @@ class TwitterClient(object):
 
         except tweepy.TweepError as e:
             # print error (if any)
-            print("Error : " + str(e))
+            print(f"Error : {str(e)}")
 
 def main():
     # creating object of TwitterClient Class
@@ -155,7 +150,7 @@ def main():
     list_coin_val = []
     start_time = datetime.now()
     try:
-        for i in range(0,60):
+        for _ in range(60):
             #This For Loop controls how many data 'cycles' are collected before visualization and tweeting
             for coin in list_coins:
                 tweets = api.get_tweets(query = coin, count = count1)
@@ -203,8 +198,7 @@ def getBitcoinPrice():
     URL = 'https://www.bitstamp.net/api/ticker/'
     try:
         r = requests.get(URL)
-        priceFloat = float(json.loads(r.text)['last'])
-        return priceFloat
+        return float(json.loads(r.text)['last'])
     except requests.ConnectionError:
         print("Error querying Bitstamp API")
 
@@ -237,12 +231,9 @@ def trading(current_price, positive_sentiment_percent, negative_sentiment_percen
         #Buy
         #use Khal's Code to place order, entries & exits
         print("TEST - BUY SIGNAL")
-        pass
     if negative_sentiment_percent>0.2:
         #Sell
         print("TEST - SELL SIGNAL")
-        #use Khal's Code to place order, entries & exits
-        pass
 
 def data_visualize(api, list_coins, start_time, end_time):
     visualize_price = []
@@ -304,9 +295,11 @@ def data_visualize(api, list_coins, start_time, end_time):
     #ax2.title('{} Sentiment Analysis, 200 Tweets (each)\n{} - {} '.format(name_list[0], start_time, end_time))
     filename='SentimentAnalysis.png' #+str(start_time).strip()+'.png'
     fig.savefig(filename)
-    #tweet out fig and message
-    msg = "@Twitter Sentiment Analysis for conversation around #Bitcoin - 200 tweets measured each cycle"
-    msg+= "\n\n Includes price. \n\nvia @BlockchainEng \n\n #SentimentAnalysis #BitcoinTrading #Bitcoin"
+    msg = (
+        "@Twitter Sentiment Analysis for conversation around #Bitcoin - 200 tweets measured each cycle"
+        + "\n\n Includes price. \n\nvia @BlockchainEng \n\n #SentimentAnalysis #BitcoinTrading #Bitcoin"
+    )
+
     api.tweet_file()
     """
     # printing first 5 positive tweets

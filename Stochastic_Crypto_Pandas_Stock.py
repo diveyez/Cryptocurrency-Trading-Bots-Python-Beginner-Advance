@@ -76,8 +76,7 @@ def simple_moving_average(prices, period=30):
     :return: a pandas series
     """
     weights = np.repeat(1.0, period)/period
-    sma = np.convolve(prices, weights, 'valid')
-    return sma
+    return np.convolve(prices, weights, 'valid')
 
 
 def fast_stochastic(lowp, highp, closep, period=14, smoothing=3):

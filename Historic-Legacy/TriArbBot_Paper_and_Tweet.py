@@ -68,12 +68,6 @@ def run():
     while 1:
         initialize_arb()
 
-
-    #Perform our Arbitrage Function
-
-    #Data Output (log) in a text file - keep track of start/end time, trades, balance
-    pass
-
 def set_time_binance():
     #Code By Khal Q
     gt=client.get_server_time()
@@ -81,8 +75,11 @@ def set_time_binance():
     #win32api.SetSystemTime(tt[0], tt[1],0,tt[2], tt[3], tt[4],tt[5],0)
 def initialize_arb():
 
-    welcome_message = "\n\n---------------------------------------------------------\n\n"
-    welcome_message+= "Hello and Welcome to the Binance Arbitrage Crypto Trader Bot Python Script\nCreated 2018 by Joaquin Roibal (@BlockchainEng)"
+    welcome_message = (
+        "\n\n---------------------------------------------------------\n\n"
+        + "Hello and Welcome to the Binance Arbitrage Crypto Trader Bot Python Script\nCreated 2018 by Joaquin Roibal (@BlockchainEng)"
+    )
+
     welcome_message+= "A quick 'run-through' will be performed to introduce you to the functionality of this bot\n"
     welcome_message+="To learn more visit medium.com/@BlockchainEng or watch introductory Youtube Videos"
     welcome_message+="\nCopyright 2018 by Joaquin Roibal\n"
@@ -108,10 +105,6 @@ def initialize_arb():
 
         #Account Withdrawal History Info
         withdraws = client.get_withdraw_history()
-        #print("\nClient Withdraw History: ", withdraws)
-
-        #for symbol in list_of_symbols:
-            #market_depth(symbol)
         #Collect all Symbols for Exchange
         #Find Arbitrage Opportunities
         coin_list = ['BTC', 'ETH', 'USDT', 'BNB', 'THETA', 'NANO']
@@ -134,15 +127,6 @@ def initialize_arb():
         print(msg1)
         data_log_to_file(msg1)
         list_balance = []
-        #for sym in list_of_arb_sym:
-            #for sym2 in sym:
-            #    orders = client.get_all_orders(symbol=sym2, limit=10)
-            #    list_balance.append(orders)
-        #data_log_to_file(list_balance)
-        #pprint(list_balance)
-
-            #info = client.get_symbol_info(sym)
-            #print(info)
         #prices = client.get_all_tickers()
         tickers = client.get_orderbook_tickers()
         #print(prices)
@@ -158,11 +142,6 @@ def initialize_arb():
             for line in read_data:
                 load_portfolio = line       #Load Previous Portfolio
         load_portfolio = list(load_portfolio[1:-1].split(','))
-        #Load From Binance
-        #print(load_portfolio)
-        #time.sleep(5)
-        #for i in range(0,3):
-            #portfolio[i] = float(portfolio[i])      #Set Type for first 4 values of Portfolio
         i=0
         for val in load_portfolio:
             #print(val.strip())
@@ -171,7 +150,7 @@ def initialize_arb():
                 break
             portfolio.append(float(val.strip()))
             i+=1
-        portf_msg = "Starting Portfolio (Paper): " + str(portfolio)
+        portf_msg = f"Starting Portfolio (Paper): {portfolio}"
         #Load Balances for each coin in exchange
         #Split BTC into 4 equal amounts, buy all 3 other coins with that amount
         print(portf_msg)
@@ -202,7 +181,7 @@ def initialize_arb():
             #Run Arbitrage Function on Highest Profit Percentage Coin for 10 minutes
             arb_list_data = []
             arb_start_time = str(datetime.now())
-            for i in range(0,45):
+            for _ in range(45):
                 #Collect Arbitrage Data Into List format for 5 cycles, 30 second cycles (replaces functionality)
 
                 try:
@@ -211,7 +190,6 @@ def initialize_arb():
                     #binance_portfolio(coin_list)
                 except:
                     raise
-                    pass
                 #print(arb_l    ist_data)
                 time.sleep(30)
             arb_end_time = str(datetime.now())

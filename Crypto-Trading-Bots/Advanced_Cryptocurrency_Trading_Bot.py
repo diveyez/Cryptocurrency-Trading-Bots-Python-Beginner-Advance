@@ -56,7 +56,7 @@ def arbitrage(cycle_num=5, cycle_time=240):
     fee_percentage = 0.001          #divided by 100
     coins = ['BTC', 'LTC', 'ETH']   #Coins to Arbitrage
     #Create Functionality for Binance
-    for exch in ccxt.exchanges:    #initialize Exchange
+    for exch in ccxt.exchanges:#initialize Exchange
         exchange1 = getattr (ccxt, exch) ()
         symbols = exchange1.symbols
         if symbols is None:
@@ -75,9 +75,7 @@ def arbitrage(cycle_num=5, cycle_time=240):
             #Find Currencies Trading Pairs to Trade
             pairs = []
             for sym in symbols:
-                for symbol in coins:
-                    if symbol in sym:
-                        pairs.append(sym)
+                pairs.extend(sym for symbol in coins if symbol in sym)
             print(pairs)
             #From Coin 1 to Coin 2 - ETH/BTC - Bid
             #From Coin 2 to Coin 3 - ETH/LTC - Ask
@@ -87,42 +85,40 @@ def arbitrage(cycle_num=5, cycle_time=240):
             j=0
             while 1:
                 if j == 1:
-                            final = arb_list[0][-3:]  + '/' + str(arb_list[1][-3:])
-                            print(final)
-                            #if final in symbols:
-                            arb_list.append(final)
-                            break
+                    final = f'{arb_list[0][-3:]}/{str(arb_list[1][-3:])}'
+                    print(final)
+                    #if final in symbols:
+                    arb_list.append(final)
+                    break
                 for sym in symbols:
-                    if sym in arb_list:
-                        pass
-                    else:
-                        if j % 2 == 0:
-                            if arb_list[j][0:3] == sym[0:3]:
-                                if arb_list[j] == sym:
-                                    pass
-                                else:
-                                    arb_list.append(sym)
-                                    print(arb_list)
-                                    j+=1
-                                    break
-                        if j % 2 == 1:
-                            if arb_list[j][-3:] == sym[-3:]:
-                                if arb_list[j] == sym:
-                                    pass
-                                else:
-                                    arb_list.append(sym)
-                                    print(arb_list)
-                                    j+=1
-                                    break
+                    if sym not in arb_list:
+                        if (
+                            j % 2 == 0
+                            and arb_list[j][:3] == sym[:3]
+                            and arb_list[j] != sym
+                        ):
+                            arb_list.append(sym)
+                            print(arb_list)
+                            j+=1
+                            break
+                        if (
+                            j % 2 == 1
+                            and arb_list[j][-3:] == sym[-3:]
+                            and arb_list[j] != sym
+                        ):
+                            arb_list.append(sym)
+                            print(arb_list)
+                            j+=1
+                            break
 
-                #time.sleep(.5)
+                            #time.sleep(.5)
             print("List of Arbitrage Symbols:", arb_list)
             #time.sleep(3)
         #Determine Rates for our 3 currency pairs - order book
             list_exch_rate_list = []
         #Create Visualization of Currency Exchange Rate Value - Over Time
             #Determine Cycle number (when data is taken) and time when taken
-            for k in range(0,cycle_num):
+            for k in range(cycle_num):
                 i=0
                 exch_rate_list = []
                 print("Cycle Number: ", k)
@@ -217,9 +213,6 @@ def diversify():
         #Change to incorporate requiring API's keys & phrases (from Keys Python Script)
         exch = getattr (ccxt, exch2) ()
         print(exch.fetchBalance())
-    #Diversify into pre-described amounts
-        # 50% BTC, 5% Each of 8 next-top coins, 10x 1% of micro-caps
-    pass
 
 def ActiveTrader():
     #Active Trader - Continuous Loop of calling trader functions such as scalping &
@@ -250,13 +243,10 @@ def initialize():
         print("\nList of Available Exchanges: \n \n")
         print(ccxt.exchanges)
 
-            #Get Exchange Info For All Listed Exchanges
         for exch1 in ccxt.exchanges:
-            list_of_symbols = []        #Reset List of Symbols for Each Exchange
             if i>0:
                 break           #Break Out of Statement
             exch = getattr (ccxt, exch1) ()
-                #print(gdax)
             #Secondary Method to Set Exchange
         #exchange1 = ccxt.binance()
             #exchange1_info = dir(exch)
@@ -274,6 +264,7 @@ def initialize():
                 #print(exchange1.id, exchange1.markets.keys())
                 print(exch.id,"-      ", symbols)
                 print("-----------------------")
+                list_of_symbols = []        #Reset List of Symbols for Each Exchange
                 for sym in symbols:
                     list_of_symbols.append(sym) #Create List of Symbols - Each Exchange
                     all_symbols.append(sym)     #Create List of ALL Symbols on ALL Exchanges
@@ -282,9 +273,6 @@ def initialize():
                 #print("Currencies: ", currencies)
                 time.sleep(5)
 
-                #Get Market Depth
-                #for symbol in list_of_symbols:
-                    #market_depth(symbol)
                 #Test Market Order - Visualize - Scalping Functions: Testing with random coin of each exchange
                 rand_sym = random.choice(list_of_symbols)
                 market_depth(rand_sym, exch)
@@ -298,29 +286,6 @@ def initialize():
                     print (exch.fetch_order_book (symbol))
                     time.sleep (3)"""
 
-        #Place a test market buy order, to place an actual order use the create_order function
-
-            #Get Info about Coins in Watch List
-        #coin_prices(list_of_symbols)
-        #coin_tickers(list_of_symbols)
-
-        #for coin in micro_cap_coins:
-        #    visualize_market_depth(1, 1, coin)
-
-        #for coin in micro_cap_coins:
-        #    scalping_orders(coin, 1, 1)
-
-            #Get recent trades
-        #trades = client.get_recent_trades(symbol='BNBBTC')
-        #print("\nRecent Trades: ", trades)
-        #print("Local Time: ", time.localtime())
-        #print("Recent Trades Time: ", convert_time_binance(trades[0]['time']))
-
-            #Get historical trades
-        #hist_trades = client.get_historical_trades(symbol='BNBBTC')
-        #print("\nHistorical Trades: ", hist_trades)
-
-            #Get aggregate trades
         #agg_trades = client.get_aggregate_trades(symbol='BNBBTC')
         #print("\nAggregate Trades: ", agg_trades)
 

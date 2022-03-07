@@ -133,9 +133,8 @@ def convert_time_binance(gt):
     ff=gg-10799260
     uu=ff/1000
     yy=int(uu)
-    tt=time.localtime(yy)
     #print(tt)
-    return tt
+    return time.localtime(yy)
 
 
 def market_depth(sym, num_entries=20):

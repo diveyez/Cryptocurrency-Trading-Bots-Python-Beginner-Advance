@@ -68,12 +68,6 @@ def run():
     #Initialize Arbitrage Binance Bot
     while 1:
         initialize_arb()
-    #Get Binance Wallet Balance - Split into 4 coins evenly
-
-    #Perform our Arbitrage Function
-
-    #Data Output (log) in a text file - keep track of start/end time, trades, balance
-    pass
 
 def set_time_binance():
     #Code By Khal Q

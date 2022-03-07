@@ -102,27 +102,25 @@ class TwitterClient(object):
             # parsing tweets one by one
             for tweet in fetched_tweets:
                 # empty dictionary to store required params of a tweet
-                parsed_tweet = {}
+                parsed_tweet = {
+                    'text': tweet.text,
+                    'sentiment': self.get_tweet_sentiment(tweet.text),
+                }
 
-                # saving text of tweet
-                parsed_tweet['text'] = tweet.text
-                # saving sentiment of tweet
-                parsed_tweet['sentiment'] = self.get_tweet_sentiment(tweet.text)
 
                 # appending parsed tweet to tweets list
-                if tweet.retweet_count > 0:
-                    # if tweet has retweets, ensure that it is appended only once
-                    if parsed_tweet not in tweets:
-                        tweets.append(parsed_tweet)
-                else:
+                if (
+                    tweet.retweet_count > 0
+                    and parsed_tweet not in tweets
+                    or tweet.retweet_count <= 0
+                ):
                     tweets.append(parsed_tweet)
-
             # return parsed tweets
             return tweets
 
         except tweepy.TweepError as e:
             # print error (if any)
-            print("Error : " + str(e))
+            print(f"Error : {str(e)}")
 
 def main():
     # creating object of TwitterClient Class

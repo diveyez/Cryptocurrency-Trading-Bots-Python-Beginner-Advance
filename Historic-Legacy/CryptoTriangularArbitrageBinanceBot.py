@@ -39,17 +39,14 @@ client = Client(api_key, api_secret)
 def run():
     #Initialize Arbitrage Binance Bot
     initialize_arb()
-    #Get Binance Wallet Balance - Split into 4 coins evenly
-
-    #Perform our Arbitrage Function
-
-    #Data Output (log) in a text file - keep track of start/end time, trades, balance
-    pass
 
 def initialize_arb():
 
-    welcome_message = "\n\n---------------------------------------------------------\n\n"
-    welcome_message+= "Hello and Welcome to the Binance Arbitrage Crypto Trader Bot Python Script\nCreated 2018 by Joaquin Roibal (@BlockchainEng)"
+    welcome_message = (
+        "\n\n---------------------------------------------------------\n\n"
+        + "Hello and Welcome to the Binance Arbitrage Crypto Trader Bot Python Script\nCreated 2018 by Joaquin Roibal (@BlockchainEng)"
+    )
+
     welcome_message+= "A quick 'run-through' will be performed to introduce you to the functionality of this bot\n"
     welcome_message+="To learn more visit medium.com/@BlockchainEng or watch introductory Youtube Videos"
     welcome_message+="\nCopyright 2018 by Joaquin Roibal\n"
@@ -65,19 +62,12 @@ def initialize_arb():
 
         #Account Withdrawal History Info
         withdraws = client.get_withdraw_history()
-        #print("\nClient Withdraw History: ", withdraws)
-
-        #for symbol in list_of_symbols:
-            #market_depth(symbol)
         #Collect all Symbols for Exchange
         #Find Arbitrage Opportunities
         list_of_symbols = ['ETHBTC', 'BNBETH', 'BNBBTC']
         list_of_symbols2 = ['ETHUSDT', 'BNBETH', 'BNBUSDT']
         list_of_symbols3 = ['BTCUSDT', 'BNBBTC', 'BNBUSDT']
         list_of_arb_sym = [list_of_symbols, list_of_symbols2, list_of_symbols3]
-        #for sym in list_of_symbols:
-            #info = client.get_symbol_info(sym)
-            #print(info)
         #prices = client.get_all_tickers()
         tickers = client.get_orderbook_tickers()
         #print(prices)
@@ -90,10 +80,6 @@ def initialize_arb():
             for line in read_data:
                 load_portfolio = line       #Load Previous Portfolio
         load_portfolio = list(load_portfolio[1:-1].split(','))
-        #print(load_portfolio)
-        #time.sleep(5)
-        #for i in range(0,3):
-            #portfolio[i] = float(portfolio[i])      #Set Type for first 4 values of Portfolio
         i=0
         for val in load_portfolio:
             #print(val.strip())
@@ -102,15 +88,16 @@ def initialize_arb():
                 break
             portfolio.append(float(val))
             i+=1
-        portf_msg = "Starting Portfolio: " + str(portfolio)
+        portf_msg = f"Starting Portfolio: {portfolio}"
         print(portf_msg)
         portf_file_save(portfolio)
         data_log_to_file(portf_msg)
         while 1:
             #Run Arbitrage Profit Functionality - To Determine Highest Profit Percentage - Cont Loop
-            calc_profit_list =[]
-            for arb_market in list_of_arb_sym:
-                calc_profit_list.append(arbitrage_bin(arb_market, tickers, portfolio, 1, 1))
+            calc_profit_list = [
+                arbitrage_bin(arb_market, tickers, portfolio, 1, 1)
+                for arb_market in list_of_arb_sym
+            ]
 
             for profit1 in calc_profit_list:
                 data_log_to_file(str(profit1))
@@ -129,7 +116,7 @@ def initialize_arb():
             #Run Arbitrage Function on Highest Profit Percentage Coin for 10 minutes
             arb_list_data = []
             arb_start_time = str(datetime.now())
-            for i in range(0,5):
+            for _ in range(5):
                 #Collect Arbitrage Data Into List format for 5 cycles, 30 second cycles (replaces functionality)
                 arb_list_data.append(arbitrage_bin(list_of_arb_sym[m], tickers, portfolio, 1, 1, 'Yes'))   #'Yes' to place orders
                 #print(arb_list_data)
@@ -155,8 +142,10 @@ def arbitrage_bin(list_of_sym, tickers, portfolio, cycle_num=10, cycle_time=30, 
     data_log_to_file(arb_message)
     time.sleep(2)
     fee_percentage = 0.05          #divided by 100
+    #Determine Rates for our 3 currency pairs - order book
+    list_exch_rate_list = []
     #Created Arbitrage Functionality for  with Python-Binance
-    for i in range(0,1):    #initialize Exchange
+    for i in range(1):#initialize Exchange
         #create blacklist of exchanges
 
             #exchange1 = getattr (ccxt, exch) ()
@@ -207,97 +196,92 @@ def arbitrage_bin(list_of_sym, tickers, portfolio, cycle_num=10, cycle_time=30, 
                                     j+=1
                                     break
             """
-                #time.sleep(.5)
         print("List of Arbitrage Symbols:", list_of_sym)
-            #time.sleep(3)
-        #Determine Rates for our 3 currency pairs - order book
-        list_exch_rate_list = []
-        if 1:
         #Create Visualization of Currency Exchange Rate Value - Over Time
             #Determine Cycle number (when data is taken) and time when taken
-            for k in range(0,cycle_num):
-                i=0
-                exch_rate_list = []
-                data_collect_message1 = "Data Collection Cycle Number: "+str(k) +'\n'
-                print(data_collect_message1)
-                data_log_to_file(data_collect_message1)
-                for sym in list_of_sym:
-                    currency_pair = "Currency Pair: "+str(sym)+"\n"
-                    print(currency_pair)
-                    data_log_to_file(currency_pair)
-                    if sym in list_of_sym:
-                        #depth = client.get_(sym)
-                        #print(depth)
-                        """if i == 0:      #For first in triangle
+        for k in range(cycle_num):
+            i=0
+            exch_rate_list = []
+            data_collect_message1 = "Data Collection Cycle Number: "+str(k) +'\n'
+            print(data_collect_message1)
+            data_log_to_file(data_collect_message1)
+            for sym in list_of_sym:
+                currency_pair = f"Currency Pair: {str(sym)}" + "\n"
+                print(currency_pair)
+                data_log_to_file(currency_pair)
+                if sym in list_of_sym:
+                    #depth = client.get_(sym)
+                    #print(depth)
+                    """if i == 0:      #For first in triangle
                             depth = client.get_order_book(symbol=sym)
                             exch_rate_list.append(float(depth['bids'][0][0]))
                             print(depth['bids'][0][0])
                         """
-                        if i % 2==0:
-                            #exch_rate_list.append(depth['bids'][0][0]) #converted to Binance
-                            depth = client.get_order_book(symbol=sym)
-                            inv1 = depth['asks'][0][0]
-                            exch_rate_list.append(float(inv1)) #Inverse Because of Binance Format
-                            Exch_rate1 = "Exchange Rate: {}".format(depth['asks'][0][0]) +'\n'
-                            print(Exch_rate1)
-                            data_log_to_file(Exch_rate1)
-                        if i == 1:
-                            #exch_rate_list.append(depth['asks'][0][0])
-                            depth = client.get_order_book(symbol=sym)
-                            inv2 = round(1.0/float(depth['bids'][0][0]),6)
-                            exch_rate_list.append(float(inv2))      #Inverse because Binance Format
-                            Exch_rate2 = "Exchange Rate: {}".format(depth['bids'][0][0])+'\n'
-                            print(Exch_rate2)
-                            data_log_to_file(Exch_rate2)
-                        i+=1
-                    else:
-                        exch_rate_list.append(0)
-
-                #exch_rate_list.append(((rateB[-1]-rateA[-1])/rateA[-1])*100)  #Expected Profit
-                exch_rate_list.append(datetime.now())      #changed to Human Readable time
-                #time.sleep(10)
-                #Compare to determine if Arbitrage opp exists
-                rate1 = exch_rate_list[0]
-                buy_price = "Buy: {}\n".format(rate1)
-                print(buy_price)
-                data_log_to_file(buy_price)
-                rate2 = float(exch_rate_list[2])*float(exch_rate_list[1])
-                sell_price = "Sell: {}\n".format(rate2)
-                print(sell_price)
-                data_log_to_file(sell_price)
-                if float(rate1)<float(rate2):
-                    arb_1_msg = "Arbitrage Possibility - "
-                    #Calculate Profit, append to List
-                    arb_profit = round((float(rate2)-float(rate1))/float(rate2)*100,3)
-                    arb_1_msg += "Potential Profit (Percentage): "+str(arb_profit) +'%\n'
-                    print(arb_1_msg)
-                    data_log_to_file(arb_1_msg)
-                    exch_rate_list.append(arb_profit)
-                    #Calculate Amount Profit (orderbooks)
-                    #Place Order (Play Money)
-                    if place_order == 'Yes':
-                        place_order_msg = "PLACING ORDER"
-                        print(place_order_msg)
-                        data_log_to_file(place_order_msg)
-                        #Call function that will paper-trade with portfolio
-                        #portfolio = list(portfolio)
-                        portfolio = tri_arb_paper(portfolio, list_of_sym, exch_rate_list)
-                        portf_file_save(portfolio)
+                    if i % 2==0:
+                        #exch_rate_list.append(depth['bids'][0][0]) #converted to Binance
+                        depth = client.get_order_book(symbol=sym)
+                        inv1 = depth['asks'][0][0]
+                        exch_rate_list.append(float(inv1)) #Inverse Because of Binance Format
+                        Exch_rate1 = "Exchange Rate: {}".format(depth['asks'][0][0]) +'\n'
+                        print(Exch_rate1)
+                        data_log_to_file(Exch_rate1)
+                    if i == 1:
+                        #exch_rate_list.append(depth['asks'][0][0])
+                        depth = client.get_order_book(symbol=sym)
+                        inv2 = round(1.0/float(depth['bids'][0][0]),6)
+                        exch_rate_list.append(float(inv2))      #Inverse because Binance Format
+                        Exch_rate2 = "Exchange Rate: {}".format(depth['bids'][0][0])+'\n'
+                        print(Exch_rate2)
+                        data_log_to_file(Exch_rate2)
+                    i+=1
                 else:
-                    arb_2_msg = "No Arbitrage Possibility"
-                    print(arb_2_msg)
-                    data_log_to_file(arb_2_msg)
-                    #Add 0 for profit to list
                     exch_rate_list.append(0)
-                exch_msg = "Exchange Rate List: " +str(exch_rate_list)+'\n'
-                #for exch_list in exch_rate_list:
-                print(exch_msg)
-                data_log_to_file(exch_msg)
-                #Format data (list) into List format (list of lists)
-                #list_exch_rate_list.append(exch_rate_list)
-                time.sleep(cycle_time)
-            #print(list_exch_rate_list)
-            print('\nARBITRAGE FUNCTIONALITY SUCCESSFUL - Data of Exchange Rates Collected\n')
+
+            #exch_rate_list.append(((rateB[-1]-rateA[-1])/rateA[-1])*100)  #Expected Profit
+            exch_rate_list.append(datetime.now())      #changed to Human Readable time
+            #time.sleep(10)
+            #Compare to determine if Arbitrage opp exists
+            rate1 = exch_rate_list[0]
+            buy_price = "Buy: {}\n".format(rate1)
+            print(buy_price)
+            data_log_to_file(buy_price)
+            rate2 = float(exch_rate_list[2])*float(exch_rate_list[1])
+            sell_price = "Sell: {}\n".format(rate2)
+            print(sell_price)
+            data_log_to_file(sell_price)
+            if float(rate1)<float(rate2):
+                arb_1_msg = "Arbitrage Possibility - "
+                #Calculate Profit, append to List
+                arb_profit = round((float(rate2)-float(rate1))/float(rate2)*100,3)
+                arb_1_msg += "Potential Profit (Percentage): "+str(arb_profit) +'%\n'
+                print(arb_1_msg)
+                data_log_to_file(arb_1_msg)
+                exch_rate_list.append(arb_profit)
+                #Calculate Amount Profit (orderbooks)
+                #Place Order (Play Money)
+                if place_order == 'Yes':
+                    place_order_msg = "PLACING ORDER"
+                    print(place_order_msg)
+                    data_log_to_file(place_order_msg)
+                    #Call function that will paper-trade with portfolio
+                    #portfolio = list(portfolio)
+                    portfolio = tri_arb_paper(portfolio, list_of_sym, exch_rate_list)
+                    portf_file_save(portfolio)
+            else:
+                arb_2_msg = "No Arbitrage Possibility"
+                print(arb_2_msg)
+                data_log_to_file(arb_2_msg)
+                #Add 0 for profit to list
+                exch_rate_list.append(0)
+            exch_msg = f"Exchange Rate List: {exch_rate_list}" + '\n'
+            #for exch_list in exch_rate_list:
+            print(exch_msg)
+            data_log_to_file(exch_msg)
+            #Format data (list) into List format (list of lists)
+            #list_exch_rate_list.append(exch_rate_list)
+            time.sleep(cycle_time)
+        #print(list_exch_rate_list)
+        print('\nARBITRAGE FUNCTIONALITY SUCCESSFUL - Data of Exchange Rates Collected\n')
     return exch_rate_list
 
 def tri_arb_paper(portfolio1, sym_list, list_exch_rates):
@@ -319,13 +303,25 @@ def tri_arb_paper(portfolio1, sym_list, list_exch_rates):
     amt_coin2 = start_amount / float(list_exch_rates[0])
     amt_coin3 = amt_coin2 * float(list_exch_rates[1])
     final_amount = amt_coin3 * float(list_exch_rates[2])
-    tri_arb_paper_msg = "Starting Amount: "+str(sym_list[0][-3:])+" "+str(start_amount)+'\n'
+    tri_arb_paper_msg = (
+        f"Starting Amount: {str(sym_list[0][-3:])} {start_amount}" + '\n'
+    )
+
     #Buy Currency 2 with Currency 1
-    tri_arb_paper_msg += "Amount Coin 2: "+str(sym_list[0][0:3])+" "+str(amt_coin2)+'\n'
+    tri_arb_paper_msg += (
+        f"Amount Coin 2: {str(sym_list[0][:3])} {str(amt_coin2)}" + '\n'
+    )
+
     #Buy Currency 3 with Currency 2
-    tri_arb_paper_msg += "Amount Coin 3: "+str(sym_list[2][0:3])+" "+str(amt_coin3) +'\n'
+    tri_arb_paper_msg += (
+        f"Amount Coin 3: {str(sym_list[2][:3])} {str(amt_coin3)}" + '\n'
+    )
+
     #Buy Currency 1 with Currency 3
-    tri_arb_paper_msg += "Final Amount: "+str(sym_list[0][-3:])+" "+str(final_amount)+'\n'
+    tri_arb_paper_msg += (
+        f"Final Amount: {str(sym_list[0][-3:])} {str(final_amount)}" + '\n'
+    )
+
     print(tri_arb_paper_msg)
     data_log_to_file(tri_arb_paper_msg)
     portfolio1[portf_pos] = final_amount

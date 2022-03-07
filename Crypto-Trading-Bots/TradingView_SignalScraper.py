@@ -183,7 +183,7 @@ def tweet(msg):
 	msg+="\n\nvia @BlockchainEng \n\n #Bitcoin #BTC #Crypto #BitcoinTrading #CryptoTrading #CryptoTradingBot"
 	print(msg) #Tweet this message then upload file
 	if len(msg)>279:
-		msg = msg[0:279]
+		msg = msg[:279]
     #api.update_status(msg)
 
 if __name__ == "__main__":
